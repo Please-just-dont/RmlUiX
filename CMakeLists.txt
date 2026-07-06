@@ -43,17 +43,17 @@ else()
 	set(RMLUI_FONT_ENGINE_ENABLED TRUE)
 endif()
 
-if(RMLUI_IS_ROOT_PROJECT)
-	option(BUILD_TESTING "CMake standard option. Enable RmlUi testing projects." OFF)
-	if(BUILD_TESTING)
-		enable_testing()
-		set(RMLUI_TESTS ON)
-		if(WIN32 AND BUILD_SHARED_LIBS AND NOT CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS)
-			message(FATAL_ERROR "The RmlUi testing framework cannot be built when using shared libraries with default visibility on Windows. "
-				"Please disable either BUILD_SHARED_LIBS or BUILD_TESTING.")
-		endif()
+
+option(BUILD_TESTING "CMake standard option. Enable RmlUi testing projects." OFF)
+if(BUILD_TESTING)
+	enable_testing()
+	set(RMLUI_TESTS ON)
+	if(WIN32 AND BUILD_SHARED_LIBS AND NOT CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS)
+		message(FATAL_ERROR "The RmlUi testing framework cannot be built when using shared libraries with default visibility on Windows. "
+			"Please disable either BUILD_SHARED_LIBS or BUILD_TESTING.")
 	endif()
 endif()
+
 
 option(RMLUI_LUA_BINDINGS "Build Lua bindings." OFF)
 if(RMLUI_LUA_BINDINGS)
