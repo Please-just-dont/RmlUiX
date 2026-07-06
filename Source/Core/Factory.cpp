@@ -83,7 +83,7 @@ namespace RmlUiX
 		}
 
 		/* Because the generic instancer ("*") is the most common it's cached. Most elements use it
-		 * Is initialized just after Rml::Initialize()
+		 * Is initialized in Factory::Initialise()
 		 */
 		Rml::ElementInstancer* cached_generic_element_instancer = nullptr;
 	}
@@ -234,6 +234,10 @@ void Factory::Initialise()
 
 	RegisterElementInstancer("progress", &default_instancers.progress);
 	RegisterElementInstancer("progressbar", &default_instancers.progress);
+
+
+	RmlUiX::internal::cached_generic_element_instancer = Rml::Factory::GetElementInstancer("*");
+
 
 	// Decorator instancers
 	RegisterDecoratorInstancer("text", &default_instancers.decorator_text);
