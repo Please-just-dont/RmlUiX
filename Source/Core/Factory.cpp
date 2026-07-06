@@ -55,6 +55,49 @@
 #include "XMLParseTools.h"
 #include <algorithm>
 
+
+
+
+
+
+
+namespace RmlUiX
+{
+	namespace internal
+	{
+		/**
+		 * This works exactly like typical Rml::Factory::InstanceElement lower down the page except we provide the instancer directly.
+		 */
+		Rml::ElementPtr InstanceElementWithInstancer(Rml::Element* parent, Rml::ElementInstancer* instancer, Rml::String tag, const Rml::XMLAttributes& attributes)
+		{
+			if (Rml::ElementPtr element = instancer->InstanceElement(parent, tag, attributes))
+			{
+				element->SetInstancer(instancer);
+				element->SetAttributes(attributes);
+
+				Rml::PluginRegistry::NotifyElementCreate(element.get());
+				return element;
+			}
+
+			return nullptr;
+		}
+
+		/* Because the generic instancer ("*") is the most common it's cached. Most elements use it
+		 * Is initialized just after Rml::Initialize()
+		 */
+		Rml::ElementInstancer* cached_generic_element_instancer = nullptr;
+	}
+
+}
+
+
+
+
+
+
+
+
+
 namespace Rml {
 
 // Default instancers are constructed and destroyed on Initialise and Shutdown, respectively.
