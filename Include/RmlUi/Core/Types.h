@@ -85,7 +85,13 @@ using FontFaceHandle = uintptr_t;
 using FontEffectsHandle = uintptr_t;
 using LayerHandle = uintptr_t;
 
-using ElementPtr = UniqueReleaserPtr<Element>;
+/**
+ * ElementPtr type changed by RmlUiX so that every element can be held by a shared pointer. Meaning there's don't have to construct ObserverPtr.
+ * A weak pointer can still be gotten with Rml::Element::GetObserverPtr
+ */
+#include "./RmlUiXElementSharedPointer.h"
+using ElementPtr = RmlUiX::internal::RmlUiXElementSharedPointer<Element, Releaser<Element>>;
+
 using ContextPtr = UniqueReleaserPtr<Context>;
 using EventPtr = UniqueReleaserPtr<Event>;
 

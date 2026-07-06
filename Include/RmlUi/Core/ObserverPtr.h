@@ -3,6 +3,7 @@
 #include "Header.h"
 #include <type_traits>
 #include <utility>
+#include "./RmlUiXElementSharedPointer.h"
 
 namespace Rml {
 
@@ -162,6 +163,14 @@ private:
 	}
 
 	Detail::ObserverPtrBlock* block = nullptr;
+
+	/**
+	* Added by RmlUiX so that every element can be held by a shared pointer.
+	*/
+private:
+	template <typename pointed_t, typename releaser_t>
+	friend class RmlUiX::internal::RmlUiXElementSharedPointer;
+	unsigned int refCount = 0;
 };
 
 } // namespace Rml
