@@ -345,9 +345,7 @@ ElementInstancer* Factory::GetElementInstancer(const String& tag)
 	auto instancer_iterator = factory_data->element_instancers.find(tag);
 	if (instancer_iterator == factory_data->element_instancers.end())
 	{
-		instancer_iterator = factory_data->element_instancers.find("*");
-		if (instancer_iterator == factory_data->element_instancers.end())
-			return nullptr;
+		return RmlUiX::internal::cached_generic_element_instancer;
 	}
 
 	return instancer_iterator->second;
