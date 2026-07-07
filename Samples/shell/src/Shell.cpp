@@ -7,12 +7,50 @@
 #include <RmlUi/Core/Input.h>
 #include <RmlUi/Debugger.h>
 
+
 static Rml::UniquePtr<ShellFileInterface> file_interface;
+
+#include <filesystem>
+
+/** For me it never finds the samples folder correctly, allow user to pass the exact path with variable:
+ * RMLUI_SAMPLES_FOLDER_PATH either on all targets with add_compile_definitions, or just the rmlui_shell target
+ */
+static Rml::String findSamplesRoot()
+{
+#ifndef RMLUI_SAMPLES_FOLDER_PATH
+	return PlatformExtensions::FindSamplesRoot();
+#else
+
+
+	using namespace std;
+
+	std::string samples_folder_path = std::string(RMLUI_SAMPLES_FOLDER_PATH);
+	if (samples_folder_path.empty())
+		return PlatformExtensions::FindSamplesRoot();
+
+
+	if (!filesystem::is_directory(samples_folder_path))
+		return PlatformExtensions::FindSamplesRoot();
+
+	filesystem::path path_to_rml_file = filesystem::path(samples_folder_path).append("assets/rml.rcss");
+
+	if (!filesystem::is_regular_file(path_to_rml_file))
+		return PlatformExtensions::FindSamplesRoot();
+
+	/* RML EXPECTS THE PATH STRING TO END IN A PATH SEPARATOR, ENSURE IT HAS ONE */
+	if (!samples_folder_path.ends_with('/') && !samples_folder_path.ends_with('\\'))
+		samples_folder_path += '/';
+
+	return samples_folder_path;
+
+#endif
+}
+
 
 bool Shell::Initialize()
 {
 	// Find the path to the 'Samples' directory.
-	Rml::String root = PlatformExtensions::FindSamplesRoot();
+	Rml::String root = findSamplesRoot();
 	if (root.empty())
 		return false;
 
