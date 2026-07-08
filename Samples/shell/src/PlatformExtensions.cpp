@@ -25,8 +25,47 @@
 
 #endif
 
+
+#include <filesystem>
+
+/** For me it never finds the samples folder correctly, allow user to pass the exact path with variable:
+ * RMLUI_SAMPLES_FOLDER_PATH either on all targets with add_compile_definitions, or just the rmlui_shell target
+ */
+static Rml::String findSamplesRoot()
+{
+	using namespace std;
+
+	std::string samples_folder_path = std::string(RMLUI_SAMPLES_FOLDER_PATH);
+	if (samples_folder_path.empty())
+		return PlatformExtensions::FindSamplesRoot();
+
+
+	if (!filesystem::is_directory(samples_folder_path))
+		return PlatformExtensions::FindSamplesRoot();
+
+	filesystem::path path_to_rml_file = filesystem::path(samples_folder_path).append("assets/rml.rcss");
+
+	if (!filesystem::is_regular_file(path_to_rml_file))
+		return PlatformExtensions::FindSamplesRoot();
+
+	/* RML EXPECTS THE PATH STRING TO END IN A PATH SEPARATOR, ENSURE IT HAS ONE */
+	if (!samples_folder_path.ends_with('/') && !samples_folder_path.ends_with('\\'))
+		samples_folder_path += '/';
+
+	return samples_folder_path;
+}
+
+
+
+
 Rml::String PlatformExtensions::FindSamplesRoot()
 {
+#ifdef RMLUI_SAMPLES_FOLDER_PATH
+	std::string result = findSamplesRoot();
+	if (!result.empty()) return result;
+#endif
+
+
 #ifdef RMLUI_PLATFORM_WIN32
 	// Test various relative paths to the "Samples" directory, based on common build and install locations.
 	const char* candidate_paths[] = {
