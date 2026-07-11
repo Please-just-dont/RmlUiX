@@ -603,6 +603,19 @@ const StringList& ElementStyle::GetClassNameList() const
 	return classes;
 }
 
+#ifdef ENABLE_MY_RMLUI_EDITS
+bool ElementStyle::SetProperty(PropertyId id, const Property& property)
+{
+	const Rml::PropertyDefinition* prop_definition = StyleSheetSpecification::GetProperty(id);
+	if (!prop_definition)
+		return false;
+
+	inline_properties.SetProperty(id, property);
+	DirtyProperty(id);
+
+	return true;
+}
+#else
 bool ElementStyle::SetProperty(PropertyId id, const Property& property)
 {
 	Property new_property = property;
@@ -616,6 +629,7 @@ bool ElementStyle::SetProperty(PropertyId id, const Property& property)
 
 	return true;
 }
+#endif
 
 void ElementStyle::SetCustomProperty(const String& name, const Property& property)
 {
